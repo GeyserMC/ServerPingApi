@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group 'org.geysermc'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repo.opencollab.dev/maven-releases/"
+    }
+    maven {
+        url "https://repo.opencollab.dev/maven-snapshots/"
+    }
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+    implementation 'com.nukkitx.protocol:bedrock-common:2.9.4'
+
+    implementation 'com.github.lucaazalim:minecraft-server-ping:834813ff4d'
+}
+
+test {
+    useJUnitPlatform()
+}
