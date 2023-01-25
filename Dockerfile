@@ -6,7 +6,7 @@ WORKDIR /build
 
 COPY . .
 
-RUN ./gradlew clean buildForDocker --no-daemon
+RUN ./gradlew clean build --no-daemon
 
 # Runtime
 FROM openjdk:17-slim
@@ -21,6 +21,6 @@ USER pingapi:pingapi
 
 EXPOSE 8080
 
-COPY --from=builder /build/build/libs/docker/ServerPingAPI.jar .
+COPY --from=builder /build/build/libs/ServerPingAPI.jar .
 
 CMD ["java", "-jar", "/app/ServerPingAPI.jar"]
