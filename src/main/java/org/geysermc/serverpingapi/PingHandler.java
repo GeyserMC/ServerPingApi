@@ -33,8 +33,7 @@ public class PingHandler implements HttpHandler {
             return;
         }
 
-//        hostname = "test.geysermc.org";
-        hostname = exchange.getRemoteAddress().getHostString();
+        hostname = exchange.getRequestHeaders().containsKey("X-Forwarded-For") ? exchange.getRequestHeaders().getFirst("X-Forwarded-For") : exchange.getRemoteAddress().getHostString();
 
         try {
             port = Integer.parseInt(exchange.getRequestURI().toString().substring(1));
