@@ -12,7 +12,7 @@ public class Server {
     public Server() throws Exception {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
-        server = HttpServer.create(new InetSocketAddress("127.0.0.1", 8080), 0);
+        server = HttpServer.create(new InetSocketAddress("0.0.0.0", 8080), 0);
         server.createContext("/", new PingHandler());
         server.setExecutor(threadPoolExecutor);
     }
