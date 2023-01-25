@@ -11,12 +11,15 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class PingHandler implements HttpHandler {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy:H:m:s Z");
 
     int code;
     PingResponse response;
@@ -98,6 +101,9 @@ public class PingHandler implements HttpHandler {
         OutputStream outputStream = exchange.getResponseBody();
 
         String htmlResponse = OBJECT_MAPPER.writeValueAsString(response);
+
+        // Log in the apache combined format any requests and their responses
+        System.out.println("%s - - [%s] \"%s %s %s\" %s %s \"-\" \"%s\"".formatted(hostname, DATE_FORMAT.format(new Date()), exchange.getRequestMethod(), exchange.getRequestURI(), exchange.getProtocol(), code, htmlResponse.length(), exchange.getRequestHeaders().getFirst("User-Agent")));
 
         exchange.getResponseHeaders().add("Content-Type", "application/json; charset=utf-8");
         exchange.sendResponseHeaders(code, htmlResponse.length());
