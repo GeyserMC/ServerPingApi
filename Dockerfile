@@ -15,8 +15,8 @@ ARG JVM_FLAVOR
 FROM eclipse-temurin:${JAVA_VERSION}-alpine
 WORKDIR /app
 
-RUN groupadd --system pingapi \
-    && useradd --system pingapi --gid pingapi \
+RUN addgroup -S pingapi \
+    && adduser -S pingapi -G pingapi \
     && chown -R pingapi:pingapi /app
 USER pingapi:pingapi
 
