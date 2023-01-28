@@ -1,50 +1,47 @@
 plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+	id 'java'
+	id 'org.springframework.boot' version '3.0.2'
+	id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group 'org.geysermc'
-version '1.0-SNAPSHOT'
+group = 'org.geysermc'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '17'
 
 repositories {
-    mavenCentral()
-    maven {
-        url "https://repo.opencollab.dev/maven-releases/"
-    }
-    maven {
-        url "https://repo.opencollab.dev/maven-snapshots/"
-    }
-    maven {
-        url 'https://jitpack.io'
-    }
+	mavenCentral()
+	maven {
+		url "https://repo.opencollab.dev/maven-releases/"
+	}
+	maven {
+		url "https://repo.opencollab.dev/maven-snapshots/"
+	}
+	maven {
+		url 'https://jitpack.io'
+	}
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
-    implementation 'com.nukkitx.protocol:bedrock-common:2.9.4'
+	implementation 'com.nukkitx.protocol:bedrock-common:2.9.4'
 
-    implementation 'com.github.lucaazalim:minecraft-server-ping:834813ff4d'
+	implementation 'com.github.lucaazalim:minecraft-server-ping:bc970c5'
 }
 
-test {
-    useJUnitPlatform()
+tasks.named('test') {
+	useJUnitPlatform()
 }
 
-jar {
-    manifest {
-        attributes(
-            'Main-Class': 'org.geysermc.serverpingapi.Main'
-        )
-    }
+// From StackOverflow: https://stackoverflow.com/a/53087407
+// Licensed under: CC BY-SA 4.0
+task buildForDocker(type: Copy){
+	from bootJar
+	into 'build/libs/docker'
+	rename { String fileName ->
+		// a simple way is to remove the "-$version" from the jar filename
+		// but you can customize the filename replacement rule as you wish.
+		fileName.replace("-$project.version", "")
+	}
 }
-
-shadowJar {
-    archiveBaseName.set("$project.name")
-    archiveClassifier.set('')
-    archiveVersion.set('')
-}
-
-build.dependsOn shadowJar

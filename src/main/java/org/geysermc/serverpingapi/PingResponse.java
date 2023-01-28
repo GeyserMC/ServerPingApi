@@ -1,4 +1,4 @@
 package org.geysermc.serverpingapi;
 
-public record PingResponse(boolean success, String message, PingData data) {
+public record PingResponse(boolean success, String message, QueryData query, PingData ping) {
 }
