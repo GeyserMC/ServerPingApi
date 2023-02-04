@@ -23,10 +23,12 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	implementation 'com.nukkitx.protocol:bedrock-common:2.9.4'
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.2'
 
+	implementation 'com.nukkitx.protocol:bedrock-common:2.9.4'
 	implementation 'com.github.lucaazalim:minecraft-server-ping:bc970c5'
 }
 
