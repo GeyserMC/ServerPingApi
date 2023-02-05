@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.time.Instant;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -28,9 +29,9 @@ public class PingService {
     }
 
     @Cacheable("servers")
-    public PingData getPing(QueryData queryData) throws Exception {
+    public PingDataCached getPing(QueryData queryData) throws Exception {
         logger.info("Pinging server " + queryData.hostname() + ":" + queryData.port());
-        return getPingInner(queryData, true);
+        return new PingDataCached(getPingInner(queryData, true), Instant.now());
     }
 
     private PingData getPingInner(QueryData queryData, boolean firstPing) throws Exception {
