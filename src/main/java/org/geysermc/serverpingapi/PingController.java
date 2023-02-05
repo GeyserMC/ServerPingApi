@@ -33,8 +33,8 @@ public class PingController {
             queryData = new QueryData(hostname, InetAddress.getByName(hostname).getHostAddress(), port);
             request.setAttribute("queryData", queryData);
 
-            PingDataCached pingData = pingService.getPing(queryData);
-            return new PingResponse(true, "", queryData, pingData.pingData(), new CacheData(pingData.cacheTime()));
+            PingCached pingData = pingService.getPing(queryData);
+            return new PingResponse(pingData.success(), pingData.message(), queryData, pingData.pingData(), new CacheData(pingData.cacheTime()));
         } catch (Exception e) {
             return new PingResponse(false, e.getMessage(), queryData);
         }
@@ -42,6 +42,6 @@ public class PingController {
 
     @ExceptionHandler
     public ResponseEntity<?> dataNotFoundExceptionHandling(Exception exception, WebRequest request) {
-        return new ResponseEntity<>(new PingResponse(false, exception.getCause().getMessage(), (QueryData) request.getAttribute("queryData",RequestAttributes.SCOPE_REQUEST)), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new PingResponse(false, exception.getCause().getMessage(), (QueryData) request.getAttribute("queryData", RequestAttributes.SCOPE_REQUEST)), HttpStatus.BAD_REQUEST);
     }
 }

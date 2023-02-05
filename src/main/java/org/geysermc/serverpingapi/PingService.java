@@ -29,9 +29,13 @@ public class PingService {
     }
 
     @Cacheable("servers")
-    public PingDataCached getPing(QueryData queryData) throws Exception {
+    public PingCached getPing(QueryData queryData) {
         logger.info("Pinging server " + queryData.hostname() + ":" + queryData.port());
-        return new PingDataCached(getPingInner(queryData, true), Instant.now());
+        try {
+            return new PingDataCached(getPingInner(queryData, true), Instant.now());
+        } catch (Exception e) {
+            return new UnsuccessfulPingCached(e.getMessage(), Instant.now());
+        }
     }
 
     private PingData getPingInner(QueryData queryData, boolean firstPing) throws Exception {
@@ -46,7 +50,7 @@ public class PingService {
                 return getPingInner(queryData, false);
             } else {
                 if (e.getCause() instanceof TimeoutException) {
-                    throw new AssertionError("Connection timed out");
+                    throw new Exception("Connection timed out");
                 } else {
                     throw e;
                 }
