@@ -37,7 +37,7 @@ COPY ./docker/default.application.yaml ./default.application.yaml
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s \
     --retries=3 CMD [ "sh", "-c", "echo -n 'curl localhost:8080... '; \
     (\
-        curl -sf localhost:8080 > /dev/null\
+        curl -sf localhost:8080/health > /dev/null\
     ) && echo OK || (\
         echo Fail && exit 2\
     )"]
