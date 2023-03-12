@@ -23,7 +23,6 @@ RUN addgroup -S pingapi \
     && chown -R pingapi:pingapi /app
 USER pingapi:pingapi
 
-VOLUME /data/storage
 EXPOSE 8080
 
 # We override default config location search path,
