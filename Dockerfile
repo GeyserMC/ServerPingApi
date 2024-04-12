@@ -1,12 +1,14 @@
 FROM eclipse-temurin:17-alpine
 
 # Install curl for the healthcheck
-RUN apk update && apk add curl
+RUN apk update \
+    && apk add curl \
+    && adduser -h /opt/app -H -D app
 
-RUN addgroup -S pingapi \
-    && adduser -S pingapi -G pingapi \
-    && chown -R pingapi:pingapi /opt/app
-USER pingapi:pingapi
+RUN mkdir -p /opt/app && \
+    chown app:app /opt/app
+
+USER app:app
 
 WORKDIR /opt/app
 
