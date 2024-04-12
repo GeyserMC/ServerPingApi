@@ -2,6 +2,8 @@ package org.geysermc.serverpingapi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.geysermc.serverpingapi.controllers.PingController;
+import org.geysermc.serverpingapi.models.PingResponse;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;

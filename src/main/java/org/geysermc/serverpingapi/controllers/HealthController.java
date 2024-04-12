@@ -1,4 +1,4 @@
-package org.geysermc.serverpingapi;
+package org.geysermc.serverpingapi.controllers;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.GetMapping;

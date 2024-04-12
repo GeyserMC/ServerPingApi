@@ -1,4 +1,4 @@
-package org.geysermc.serverpingapi;
+package org.geysermc.serverpingapi.models;
 
 import com.nukkitx.protocol.bedrock.BedrockPong;
 

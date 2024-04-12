@@ -1,9 +1,15 @@
-package org.geysermc.serverpingapi;
+package org.geysermc.serverpingapi.services;
 
 import br.com.azalim.mcserverping.MCPing;
 import br.com.azalim.mcserverping.MCPingOptions;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
+import org.geysermc.serverpingapi.controllers.PingController;
+import org.geysermc.serverpingapi.models.PingCached;
+import org.geysermc.serverpingapi.models.PingData;
+import org.geysermc.serverpingapi.models.PingDataCached;
+import org.geysermc.serverpingapi.models.QueryData;
+import org.geysermc.serverpingapi.models.UnsuccessfulPingCached;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -57,7 +63,6 @@ public class PingService {
             }
         }
     }
-
 
     private void tcpPing(String hostname, int port) {
         // TODO: Check if we can just make a connection so we dont have to do a full ping

@@ -1,6 +1,11 @@
-package org.geysermc.serverpingapi;
+package org.geysermc.serverpingapi.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.geysermc.serverpingapi.services.PingService;
+import org.geysermc.serverpingapi.models.CacheData;
+import org.geysermc.serverpingapi.models.PingCached;
+import org.geysermc.serverpingapi.models.PingResponse;
+import org.geysermc.serverpingapi.models.QueryData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +36,7 @@ public class PingController {
         QueryData queryData = null;
         try {
             queryData = new QueryData(hostname, InetAddress.getByName(hostname).getHostAddress(), port);
-            request.setAttribute("queryData", queryData);
+            if (request != null) request.setAttribute("queryData", queryData);
 
             PingCached pingData = pingService.getPing(queryData);
             return new PingResponse(pingData.success(), pingData.message(), queryData, pingData.pingData(), new CacheData(pingData.cacheTime()));

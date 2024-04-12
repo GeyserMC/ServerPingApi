@@ -1,4 +1,4 @@
-package org.geysermc.serverpingapi;
+package org.geysermc.serverpingapi.models;
 
 import java.time.Instant;
 

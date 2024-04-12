@@ -1,4 +1,4 @@
-package org.geysermc.serverpingapi;
+package org.geysermc.serverpingapi.models;
 
 public record PingResponse(boolean success, String message, QueryData query, PingData ping, CacheData cache) {
     public PingResponse(boolean success, String message) {
