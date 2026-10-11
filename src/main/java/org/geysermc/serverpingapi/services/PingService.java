@@ -1,7 +1,5 @@
 package org.geysermc.serverpingapi.services;
 
-import br.com.azalim.mcserverping.MCPing;
-import br.com.azalim.mcserverping.MCPingOptions;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
 import org.geysermc.serverpingapi.controllers.PingController;
@@ -15,8 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -65,15 +67,38 @@ public class PingService {
     }
 
     private void tcpPing(String hostname, int port) {
+        // Send a Java Edition status request, the response is not needed
         // TODO: Check if we can just make a connection so we dont have to do a full ping
-        MCPingOptions options = MCPingOptions.builder()
-            .hostname(hostname)
-            .port(port)
-            .timeout(1500)
-            .build();
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(hostname, port), 1500);
+            socket.setSoTimeout(1500);
 
-        try {
-            MCPing.getPing(options);
+            ByteArrayOutputStream handshake = new ByteArrayOutputStream();
+            DataOutputStream handshakeData = new DataOutputStream(handshake);
+            byte[] hostnameBytes = hostname.getBytes(StandardCharsets.UTF_8);
+            writeVarInt(handshakeData, 0x00); // Handshake packet id
+            writeVarInt(handshakeData, 4); // Protocol version
+            writeVarInt(handshakeData, hostnameBytes.length);
+            handshakeData.write(hostnameBytes);
+            handshakeData.writeShort(port);
+            writeVarInt(handshakeData, 1); // Next state: status
+
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            writeVarInt(out, handshake.size());
+            out.write(handshake.toByteArray());
+            writeVarInt(out, 1); // Status request packet length
+            writeVarInt(out, 0x00); // Status request packet id
+            out.flush();
+
+            socket.getInputStream().read();
         } catch (IOException ignored) { }
+    }
+
+    private static void writeVarInt(DataOutputStream out, int value) throws IOException {
+        while ((value & ~0x7F) != 0) {
+            out.writeByte((value & 0x7F) | 0x80);
+            value >>>= 7;
+        }
+        out.writeByte(value);
     }
 }

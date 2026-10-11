@@ -17,9 +17,6 @@ repositories {
 	maven {
 		url = 'https://repo.opencollab.dev/main/'
 	}
-	maven {
-		url = 'https://jitpack.io'
-	}
 }
 
 dependencies {
@@ -31,7 +28,6 @@ dependencies {
 	implementation 'com.github.ben-manes.caffeine:caffeine:3.3.0'
 
 	implementation 'com.nukkitx.protocol:bedrock-common:2.9.4'
-	implementation 'com.github.lucaazalim:minecraft-server-ping:46ea98b7c6'
 }
 
 tasks.named('test') {
