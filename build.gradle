@@ -1,23 +1,24 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.0.2'
-	id 'io.spring.dependency-management' version '1.1.0'
+	id 'org.springframework.boot' version '3.5.16'
+	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'org.geysermc'
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = '17'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
 
 repositories {
 	mavenCentral()
 	maven {
-		url "https://repo.opencollab.dev/main/"
+		url = 'https://repo.opencollab.dev/main/'
 	}
 	maven {
-		url 'https://jitpack.io'
-	}
-	maven {
-		url 'https://oss.sonatype.org/content/repositories/snapshots'
+		url = 'https://jitpack.io'
 	}
 }
 
@@ -25,8 +26,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.2'
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.3.0'
 
 	implementation 'com.nukkitx.protocol:bedrock-common:2.9.4'
 	implementation 'com.github.lucaazalim:minecraft-server-ping:46ea98b7c6'
