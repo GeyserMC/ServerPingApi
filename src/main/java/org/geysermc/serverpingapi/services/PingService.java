@@ -1,15 +1,22 @@
 package org.geysermc.serverpingapi.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
+import org.cloudburstmc.netty.channel.nethernet.signaling.ClientInfo;
+import org.cloudburstmc.netty.channel.nethernet.signaling.HttpSignalingSettings;
+import org.cloudburstmc.netty.channel.nethernet.signaling.NetherNetHTTPClientSignaling;
 import org.geysermc.serverpingapi.controllers.PingController;
 import org.geysermc.serverpingapi.models.PingCached;
 import org.geysermc.serverpingapi.models.PingData;
 import org.geysermc.serverpingapi.models.PingDataCached;
+import org.geysermc.serverpingapi.models.PingTransport;
 import org.geysermc.serverpingapi.models.QueryData;
 import org.geysermc.serverpingapi.models.UnsuccessfulPingCached;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +37,9 @@ public class PingService {
 
     Logger logger = LoggerFactory.getLogger(PingController.class);
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     static {
         InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", 0);
         BEDROCK_CLIENT = new BedrockClient(bindAddress);
@@ -47,11 +57,20 @@ public class PingService {
     }
 
     private PingData getPingInner(QueryData queryData, boolean firstPing) throws Exception {
+        InetSocketAddress addressToPing = new InetSocketAddress(queryData.hostname(), queryData.port());
+
+        if (firstPing) {
+            try {
+                return netherNetPing(addressToPing);
+            } catch (Exception ignored) {
+                // Not a NetherNet server, fall back to RakNet
+            }
+        }
+
         try {
-            InetSocketAddress addressToPing = new InetSocketAddress(queryData.hostname(), queryData.port());
             BedrockPong pong = BEDROCK_CLIENT.ping(addressToPing, 1500, TimeUnit.MILLISECONDS).get();
 
-            return new PingData(!firstPing, pong);
+            return new PingData(PingTransport.RAKNET, !firstPing, pong);
         } catch (InterruptedException | ExecutionException e) {
             if (firstPing) {
                 tcpPing(queryData.hostname(), queryData.port());
@@ -64,6 +83,16 @@ public class PingService {
                 }
             }
         }
+    }
+
+    private PingData netherNetPing(InetSocketAddress address) throws Exception {
+        NetherNetHTTPClientSignaling.Probe probe = NetherNetHTTPClientSignaling.probe(address, HttpSignalingSettings.DEFAULT)
+            .orTimeout(1500, TimeUnit.MILLISECONDS)
+            .get();
+
+        // Return the status document as the server sent it from /v1/join
+        JsonNode pong = objectMapper.readTree(probe.motd().toJson());
+        return new PingData(PingTransport.NETHERNET, false, pong);
     }
 
     private void tcpPing(String hostname, int port) {

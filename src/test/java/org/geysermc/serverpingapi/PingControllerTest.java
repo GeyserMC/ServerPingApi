@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.geysermc.serverpingapi.controllers.PingController;
 import org.geysermc.serverpingapi.models.PingResponse;
+import org.geysermc.serverpingapi.models.PingTransport;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,19 @@ class PingControllerTest {
         assertThat(response.success()).isTrue();
         assertThat(response.query()).isNotNull();
         assertThat(response.ping()).isNotNull();
+        assertThat(response.ping().transport()).isEqualTo(PingTransport.RAKNET);
+        assertThat(response.ping().pong()).isNotNull();
+    }
+
+    @Test
+    public void netherNetPings() throws Exception {
+        PingResponse response = controller.ping("rtm516.aternos.me", 19132, null);
+        assertThat(response).isNotNull();
+        assertThat(response.success()).isTrue();
+        assertThat(response.query()).isNotNull();
+        assertThat(response.ping()).isNotNull();
+        assertThat(response.ping().transport()).isEqualTo(PingTransport.NETHERNET);
+        assertThat(response.ping().pong()).isNotNull();
     }
 
     @Test

@@ -28,6 +28,11 @@ dependencies {
 	implementation 'com.github.ben-manes.caffeine:caffeine:3.3.0'
 
 	implementation 'com.nukkitx.protocol:bedrock-common:2.9.4'
+	implementation 'org.cloudburstmc.protocol:bedrock-codec:3.0.0.Beta13-20260928.195116-33'
+	implementation('org.cloudburstmc.netty:netty-transport-nethernet:2.0.0.CR5-20261010.095725-3') {
+		// Only used for server signing keys, which we don't need
+		exclude group: 'org.bouncycastle'
+	}
 }
 
 tasks.named('test') {
